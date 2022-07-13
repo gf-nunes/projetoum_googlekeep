@@ -21,7 +21,7 @@ def crianotas(request):
         form = NotaForm(request.POST)
         if form.is_valid():
             nota = form.save(commit=False)
-            nota.usuario_id = 2 #trocar essa linha para reconhecer o usuario logado
+            nota.usuario_id = 1 #trocar essa linha para reconhecer o usuario logado
             nota.save()
             return redirect('cria.notas')
     else:
@@ -35,7 +35,7 @@ def editanotas(request, id):
         form = NotaForm(request.POST, instance=nota)
         if form.is_valid():
             nota = form.save(commit=False)
-            nota.usuario_id = 2
+            nota.usuario_id = 1
             nota.save()
             return redirect('lista.notas', id = nota.usuario_id)
     else:
