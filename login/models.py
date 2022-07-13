@@ -1,8 +1,8 @@
 from django.db import models
 
 class Nota(models.Model):
-    usuario_id = models.ForeignKey("Usuario", on_delete=models.CASCADE, related_name="notas", default=0)
-    titulo = models.CharField(max_length=128, null=True)
+    usuario = models.ForeignKey("Usuario", on_delete=models.CASCADE, related_name="notas", default=0)
+    titulo = models.CharField(max_length=128, null=True, blank=True)
     texto = models.TextField()
 
 
