@@ -15,7 +15,8 @@ urlpatterns = [
         ),
         name="usuarios.login",
     ),
-    path("", views.UsuarioCreate.as_view(), name="usuarios.cadastrar"),
-    
+    path("cadastrar/", views.UsuarioCreate.as_view(), name="usuarios.cadastrar"),
+    path('', views.pagina_inicial, name='login.inicial'),
+    path('login/<id>/', views.pagina_inicial_logado, name='pagina.logado'),
 
 ]
