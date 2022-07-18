@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notas {{ usuario_nome }}</title>
+  </head>
+  <body>
+    <h2>{{usuario_nome}}</h2>
+    <a href="{% url 'cria.notas' %}">Criar nota</a>
+    {% for nota in notas %}
+    <div>
+      <h3>{{nota.titulo}}</h3>
+      <h4>{{nota.usuario_id}}</h4>
+      <p>{{nota.texto}}</p>
+      <a href="{% url 'edita.notas' id=nota.id %}">Editar</a>
+      <a href="{% url 'deleta.notas' id=nota.id %}">Excluir</a>
+    </div>
+    {% endfor %}
+  </body>
+</html>
