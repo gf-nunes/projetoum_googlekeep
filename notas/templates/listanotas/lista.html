@@ -8,11 +8,11 @@
   </head>
   <body>
     <h2>{{usuario_nome}}</h2>
+    <a style="display: block" href="{% url 'login.login' %}">Logout</a>
     <a href="{% url 'cria.notas' %}">Criar nota</a>
     {% for nota in notas %}
     <div>
       <h3>{{nota.titulo}}</h3>
-      <h4>{{nota.usuario_id}}</h4>
       <p>{{nota.texto}}</p>
       <a href="{% url 'edita.notas' id=nota.id %}">Editar</a>
       <a href="{% url 'deleta.notas' id=nota.id %}">Excluir</a>

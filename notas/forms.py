@@ -2,9 +2,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Nota
+from .models import Nota, User
 
 
 
@@ -22,10 +21,10 @@ class LoginForm(AuthenticationForm, forms.Form):
 
     username = forms.CharField(
         max_length=76,
-        widget=forms.TextInput(attrs={"placeholder": "Email or Username"}),
+        widget=forms.TextInput(attrs={"placeholder": "Email or Username"}), # Por que isso não aparece ?
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={"placeholder": "Password"})
+        widget=forms.PasswordInput(attrs={"placeholder": "Password"}) # Por que isso não aparece ???
     )
 
     def clean(self):

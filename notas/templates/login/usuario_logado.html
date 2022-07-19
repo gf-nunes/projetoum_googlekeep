@@ -8,6 +8,7 @@
   </head>
   <body>
     <h1>Funciona !</h1>
-    <h3>Bem vindo {{ new_user.nome }}</h3>
+    <h3>Bem vindo {{ nome.username }}</h3>
+    <a href="{% url 'lista.notas' id=1 %}">Ver notas</a>
   </body>
 </html>

@@ -1,13 +1,14 @@
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
-from .forms import UsuarioForm, User, LoginForm
 from django.shortcuts import render
+from django.contrib import messages
 from django.contrib.auth import login, authenticate
-from django.http import HttpResponse
+from django.contrib.auth.forms import AuthenticationForm
 
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Nota, Usuario
-from .forms import NotaForm
+from .models import Nota, User
+from .forms import UsuarioForm, LoginForm, NotaForm
+
 
 # Create your views here.
 
@@ -17,31 +18,39 @@ def pagina_inicial(request):
 
 ## Login
 def validacao(request):
-    if request.POST:
-        form=LoginForm(request.POST)
+    if request.method == "POST":
+        form=AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            cd=form.cleaned_data
-            user=authenticate(request, username=cd['username'],password=cd['password'])
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user=authenticate(username=username, password=password)
             if user is not None:
                 login(request,user)
-                return HttpResponse('<h1> Seja bem vindo {}', format(user))
+                messages.info(request, f"Bem vindo, {username}")
+                usuario_id = request.user.id
+                return redirect('lista.notas', id=usuario_id)
             else:
-                return HttpResponse ('<h1>senhaaa</h1>')
-    form=LoginForm()
+                messages.error(request, "Senha ou usuário inválidos.")
+        else:
+            messages.error(request, "Senha ou usuário inválidos.")
+    form=AuthenticationForm()
     context={
         'form':form,
     }
-    return render (request, 'login/login.html', context)
+    return render(request, 'listanotas/lista.html', context)
 
-def pagina_inicial_logado(request, id):
-    search = Usuario.objects.get(id=id)
-    user_list = Usuario.objects.all()
+def pagina_inicial_logado(request):
+    #search = User.objects.get(id=id)
+    user_list = User.objects.all()
     new_user = user_list[::-1]
+    nome_user_logado = request.user
+    id_user_logado = request.user.id
     context = {
-        'user': search,
-        'new_user': new_user[0]
+        'new_user': new_user[0],
+        'nome': nome_user_logado,
+        'id':id_user_logado,
     }
-    return render(request, 'login/login2.html',context)
+    return render(request, 'login/usuario_logado.html',context)
 
 class UsuarioCreate(CreateView):
     template_name = "login/cadastro.html"
@@ -52,38 +61,42 @@ class UsuarioCreate(CreateView):
 
 ## CRUD
 def listanotas(request, id):
-    notas = Nota.objects.filter(usuario_id=id)
+    user = request.user.id
+    notas = Nota.objects.filter(usuario_id=user)
     autor_id = notas[0].usuario_id
-    usuario_nome = Usuario.objects.get(id=autor_id)
+    usuario_nome = User.objects.get(id=autor_id)
 
     id = int(id)
     context={
         'notas':notas,
         'id': id,
         'usuario_nome': usuario_nome,
+        'user':user,
     }
     return render(request,'listanotas/lista.html', context)
 
 def crianotas(request):
+    user = request.user.id
     if request.method == "POST":
         form = NotaForm(request.POST)
         if form.is_valid():
             nota = form.save(commit=False)
-            nota.usuario_id = 1 #trocar essa linha para reconhecer o usuario logado
+            nota.usuario_id = user
             nota.save()
-            return redirect('cria.notas')
+            return redirect('lista.notas', id = user)
     else:
         form = NotaForm()
 
     return render(request, 'listanotas/nova_nota.html',{'form':form})
 
 def editanotas(request, id):
+    user = request.user.id
     nota = get_object_or_404(Nota, id=id)
     if request.method == "POST":
         form = NotaForm(request.POST, instance=nota)
         if form.is_valid():
             nota = form.save(commit=False)
-            nota.usuario_id = 1
+            nota.usuario_id = user
             nota.save()
             return redirect('lista.notas', id = nota.usuario_id)
     else:

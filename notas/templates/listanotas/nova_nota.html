@@ -1,5 +1,7 @@
 <h2>Crie sua nota!</h2>
 <form action="" method="POST">
   {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Salvar</button>
+  <a href="{% url 'lista.notas' id=1 %}">
+    <button type="submit">Salvar</button>
+  </a>
 </form>
